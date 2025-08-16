@@ -128,15 +128,6 @@ export function EmailShareDialog({ summary, transcript, customPrompt }: EmailSha
           </DialogTitle>
         </DialogHeader>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-          <div className="flex items-center gap-2 text-blue-800">
-            <Info className="h-4 w-4" />
-            <span className="text-sm font-medium">Demo Mode</span>
-          </div>
-          <p className="text-sm text-blue-700 mt-1">
-            This is a demo version. Emails won't actually be sent, but you'll see a preview of what would be sent.
-          </p>
-        </div>
 
         {emailPreview ? (
           <div className="space-y-4">
