@@ -1,30 +1,83 @@
-# AI Meeting Summarizer
-
-*Automatically synced with your [v0.app](https://v0.app) deployments*
-
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/prakharsingh-74s-projects/v0-ai-meeting-summarizer)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/3Zvq8beyxCk)
+# AI Meeting Summarizer and Email Sharer
 
 ## Overview
+This project is an AI-powered meeting notes summarizer and sharer. It allows users to upload meeting transcripts, generate concise and actionable summaries using an LLM (Large Language Model), and share those summaries via email directly from the web interface.
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+---
 
-## Deployment
+## Tech Stack
 
-Your project is live at:
+### Frontend
+- **Next.js (App Router)**: Modern React framework for server-side rendering and routing.
+- **TypeScript**: Type safety for both frontend and backend code.
+- **Tailwind CSS**: Utility-first CSS framework for rapid UI development.
 
-**[https://vercel.com/prakharsingh-74s-projects/v0-ai-meeting-summarizer](https://vercel.com/prakharsingh-74s-projects/v0-ai-meeting-summarizer)**
+### Backend/API
 
-## Build your app
+- **ai & @ai-sdk/groq**: Used to interact with Groq's API for generating meeting summaries.
+- **Nodemailer**: For sending emails via SMTP.
 
-Continue building your app on:
+---
 
-**[https://v0.app/chat/projects/3Zvq8beyxCk](https://v0.app/chat/projects/3Zvq8beyxCk)**
+## Approach & Process
 
-## How It Works
+### 1. Summarization
+- **User uploads a transcript** or enters meeting notes.
+- The frontend sends a POST request to `/api/summarize` with the transcript and (optionally) a custom prompt.
+- The backend uses the `generateText` function from the `ai` SDK, with the Groq LLM API, to generate a structured summary.
+- The summary is returned to the frontend and displayed to the user.
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+### 2. Email Sharing
+- The user can open a dialog to share the summary via email.
+- The frontend collects recipient email(s), subject, and an optional message.
+- A POST request is sent to `/api/send-email` with the summary and email details.
+- The backend validates the input, constructs the email content, and uses Nodemailer to send the email via SMTP.
+- The result (success or error) is returned to the frontend for user feedback.
+
+### 3. Environment Variables
+- Sensitive information (API keys, SMTP credentials) is stored in a `.env` file and accessed via `process.env`.
+- Example `.env` variables:
+  - `GROQ_API_KEY` (for LLM access)
+  - `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` (for email sending)
+
+---
+
+## Key Files & Structure
+
+- `app/api/summarize/route.ts`: Handles summarization requests using Groq LLM.
+- `app/api/send-email/route.ts`: Handles email sending using Nodemailer.
+- `components/`: Contains reusable UI components (dialogs, forms, etc.).
+- `.env`: Stores environment variables (not committed to version control).
+
+---
+
+## Security & Best Practices
+- **Environment variables** are never hardcoded; always use `.env` for secrets.
+- **Input validation** is performed on both API routes to prevent misuse.
+- **Error handling** is implemented to provide clear feedback and avoid leaking sensitive information.
+- **Dependencies** are managed with `--legacy-peer-deps` when necessary to resolve conflicts.
+
+---
+
+## How to Run Locally
+1. Clone the repository.
+2. Run `npm install --legacy-peer-deps` to install dependencies.
+3. Create a `.env` file in the root with your Groq API key and SMTP credentials.
+4. Run `npm run dev` to start the development server.
+5. Access the app at `http://localhost:3000`.
+
+---
+
+## Extensibility
+- The summarization model can be swapped for any LLM supported by the `ai` SDK.
+- The email service can be replaced with any provider supported by Nodemailer (e.g., SendGrid, Mailgun, etc.).
+- UI components are modular and can be extended for more features (e.g., scheduling, attachments).
+
+---
+
+## Troubleshooting
+- **Dependency conflicts**: Use `--legacy-peer-deps` with npm/yarn if you encounter peer dependency errors.
+- **Email not sending**: Double-check your SMTP credentials and provider settings in `.env`.
+- **LLM errors**: Ensure your Groq API key is valid and you have access to the specified model.
+
+---
