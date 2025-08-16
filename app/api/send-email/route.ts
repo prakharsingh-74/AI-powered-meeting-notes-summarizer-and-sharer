@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
+import nodemailer from "nodemailer"
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,41 +39,31 @@ ${summary}
 This summary was generated using AI Meeting Summarizer.
     `.trim()
 
-    // In a real implementation, you would integrate with an email service like:
-    // - Resend
-    // - SendGrid
-    // - AWS SES
-    // - Nodemailer with SMTP
 
-    // For demo purposes, we'll simulate sending
-    console.log("[v0] Email would be sent to:", validRecipients)
-    console.log("[v0] Subject:", subject)
-    console.log("[v0] Content length:", emailContent.length)
+    // Configure Nodemailer transporter using SMTP credentials from environment variables
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT) || 587,
+      secure: process.env.SMTP_SECURE === "true", // true for 465, false for other ports
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    })
 
-    // Simulate email sending delay
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    // In production, replace this with actual email sending logic:
-    /*
-    const emailService = new EmailService() // Your chosen email service
-    await emailService.send({
-      to: validRecipients,
+    // Send the email
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || process.env.SMTP_USER, // sender address
+      to: validRecipients.join(","),
       subject,
       text: emailContent,
-      html: emailContent.replace(/\n/g, '<br>'), // Basic HTML conversion
+      html: emailContent.replace(/\n/g, "<br>"),
     })
-    */
 
     return NextResponse.json({
       success: true,
-      demo: true,
-      message: `Demo Mode: Email preview generated for ${validRecipients.length} recipient${validRecipients.length > 1 ? "s" : ""}`,
+      message: `Email sent to ${validRecipients.length} recipient${validRecipients.length > 1 ? "s" : ""}`,
       recipients: validRecipients,
-      emailPreview: {
-        to: validRecipients,
-        subject,
-        content: emailContent,
-      },
     })
   } catch (error) {
     console.error("Error sending email:", error)
