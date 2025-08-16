@@ -1,7 +1,7 @@
 # AI Meeting Summarizer and Email Sharer
 
 ## Overview
-This project is an AI-powered meeting notes summarizer and sharer. It allows users to upload meeting transcripts, generate concise and actionable summaries using an LLM (Large Language Model), and share those summaries via email directly from the web interface.
+This project is an AI-powered meeting notes summarizer and sharer. It allows users to upload meeting transcripts, generate concise and actionable summaries using an LLM API, and share those summaries via email directly from the web interface.
 
 ---
 
